@@ -12,7 +12,7 @@ const register = async(req,res) => {
     const { name, email, password, confirmPassword, role, department } = req.body;
 
     //Validation
-    if([name, password, email, confirmPassword, role, department].some((field) => field.trim() === '')) {
+    if([name, password, email, confirmPassword, role, department].some((field) => field.trim() == '')) {
         return res.status(401)
         .json({
             message: 'Fields cannot be empty. Every field is compulsory'
@@ -60,7 +60,7 @@ const register = async(req,res) => {
         department
     })
     
-    const { token } = await createdUser.generateToken();
+    const {token} = await createdUser.generateToken();
     if(!token) {
         return res.status(401)
         .json({
@@ -83,10 +83,89 @@ const register = async(req,res) => {
  * Will be used while logging in the user.
  */
 const login = async(req,res) => {
+    //Taking user input
+    const {email, password} = req.body;
 
+    //Validation
+    if([email, password].some((field) => field.trim() == '')) {
+        return res.status(401)
+        .json({
+            message: 'All the fields are mandatory.'
+        })
+    }
+
+    const existingUser = await User.findOne({email}).select('+password');
+    if(!existingUser) {
+        return res.status(401)
+        .json({
+            message: 'Invalid credentials.'
+        })
+    }
+    const isPasswordValid = await existingUser.isPasswordCorrect(password)
+    if(!isPasswordValid) {
+        return res.status(401)
+        .json({
+            message: 'Invalid credentials.'
+        })
+    }
+
+    //Fetch User
+    const user = await User.findOne({email});
+
+    const token = existingUser.generateToken();
+    console.log("Token: ",token);
+    if(!token) {
+        return res.status(401)
+        .json({
+            message: "Token could not be generated."
+        })
+    }
+    return res.status(200)
+    .cookie('Token', token)
+    .json({
+        message: 'User logged in successfully.',
+        User: user
+    })
 }
+
+const updateEmail = async(req,res) => {
+    const {email} = req.body;
+    const userId = req.user._id;
+    const fetchedUser = await User.findByIdAndUpdate(userId, {email}, {new:true});
+    if(!fetchedUser) {
+        return res.status(401)
+        .json({
+            message: 'There is a problem with authenticating you. Please try logging in again.'
+        })
+    }
+    return res.status(200)
+    .json({
+        message: 'Credentials updated successfully.',
+        email: fetchedUser.email
+    })
+}
+
+const updateName = async(req,res) => {
+    const {name} = req.body;
+    const userId = req.user._id;
+    const fetchedUser = await User.findByIdAndUpdate(userId, {name}, {new:true});
+    if(!fetchedUser) {
+        return res.status(401)
+        .json({
+            message: 'There is a problem with authenticating you. Please try logging in again.'
+        })
+    }
+    return res.status(200)
+    .json({
+        message: 'Credentials updated successfully.',
+         name: fetchedUser.name
+    })
+}
+
 
 module.exports = {
     register,
-    login
+    login,
+    updateEmail,
+    updateName
 }
