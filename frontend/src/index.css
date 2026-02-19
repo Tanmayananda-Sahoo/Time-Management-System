@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'HeroHeader';
+    src: url('../src/components/public/Fonts/c7f97008bd38275e-s.p.woff2');
+    font-weight: 100;
+}
+
+@font-face {
+    font-family: 'SecondaryFont';
+    src: url('../src/components/public/Fonts/468f6ca7592b58d2-s.p.woff2');
+    font-weight: 100;
+}
+
+@font-face {
+    font-family: 'SecondaryFont';
+    src: url('../src/components/public/Fonts/24ab849dc6206ce6-s.p.woff2');
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: 'SecondaryFont';
+    src: url('../src/components/public/Fonts/20e854a24a032470-s.p.woff2');
+    font-weight: 200;
+}

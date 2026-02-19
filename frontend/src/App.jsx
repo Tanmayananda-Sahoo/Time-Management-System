@@ -1,0 +1,21 @@
+import React from 'react';
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import HomePage from './components/pages/HomePage.jsx';
+import LoginPage from './components/pages/LoginPage.jsx';
+import RegisterPage from './components/pages/RegisterPage.jsx';
+import ErrorPage from './components/pages/ErrorPage.jsx';
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<HomePage />} />
+        <Route path='/login' element={<LoginPage/>} />
+        <Route path='/register' element={<RegisterPage />} />
+        <Route path='/*' element={<ErrorPage />} />
+      </Routes>
+    </BrowserRouter>
+  )
+}
+
+export default App
